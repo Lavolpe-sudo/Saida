@@ -6,129 +6,38 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Painel RHI - Controle de Jornada</title>
+    <title>Painel RHI - Industrial</title>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap');
 
-        body {
-            font-family: 'Rajdhani', sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
-            text-align: center;
-            padding: 15px;
-            margin: 0;
-        }
-
+        body { font-family: 'Rajdhani', sans-serif; background-color: #121212; color: #e0e0e0; text-align: center; padding: 15px; margin: 0; }
         .container { max-width: 420px; margin: 0 auto; }
-
-        #relogio-local {
-            font-size: 24px;
-            color: #ffd700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-            margin: 10px 0 20px 0;
-            background: #1a1a1a;
-            display: inline-block;
-            padding: 6px 20px;
-            border-radius: 30px;
-            border: 1px solid #333;
-            letter-spacing: 1px;
-        }
-
-        h1 { font-size: 14px; text-transform: uppercase; color: #555; letter-spacing: 3px; margin: 5px 0; }
-
-        input[type="time"] {
-            width: 100%;
-            background-color: #000;
-            border: 2px solid #ffd700;
-            color: #ffd700;
-            padding: 15px;
-            font-size: 38px;
-            font-family: 'Rajdhani';
-            border-radius: 10px;
-            text-align: center;
-            box-sizing: border-box;
-            margin-bottom: 20px;
-        }
-
-        .painel-led {
-            background: #000;
-            padding: 25px 10px;
-            border-radius: 15px;
-            border: 3px solid #2a2a2a;
-            margin-bottom: 25px;
-            box-shadow: inset 0 0 30px rgba(0,0,0,1);
-        }
-
-        #resultado {
-            font-size: 85px;
-            font-weight: 700;
-            color: #00ff41;
-            text-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
-            line-height: 1;
-            margin: 5px 0;
-        }
-
-        #contador {
-            font-size: 18px;
-            color: #666;
-            letter-spacing: 3px;
-            font-weight: bold;
-        }
-
-        .agenda-section {
-            background: #1a1a1a;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #333;
-            margin-bottom: 10px;
-            text-align: left;
-        }
-
-        .label-input { font-size: 11px; color: #888; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        #relogio-local { font-size: 24px; color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); margin: 10px 0 20px 0; background: #1a1a1a; display: inline-block; padding: 6px 20px; border-radius: 30px; border: 1px solid #333; letter-spacing: 1px; }
         
-        input[type="text"] {
-            width: 100%;
-            background: #000;
-            border: 1px solid #444;
-            color: #aaa;
-            padding: 10px;
-            font-family: 'Rajdhani';
-            font-size: 14px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-        }
+        h1 { font-size: 14px; text-transform: uppercase; color: #555; letter-spacing: 3px; margin: 5px 0; }
+        
+        input[type="time"] { width: 100%; background-color: #000; border: 2px solid #ffd700; color: #ffd700; padding: 15px; font-size: 38px; font-family: 'Rajdhani'; border-radius: 10px; text-align: center; box-sizing: border-box; margin-bottom: 20px; }
 
-        input[type="text"]:focus { border-color: #ffd700; color: #fff; }
+        .painel-led { background: #000; padding: 25px 10px; border-radius: 15px; border: 3px solid #2a2a2a; margin-bottom: 25px; box-shadow: inset 0 0 30px rgba(0,0,0,1); }
+        #resultado { font-size: 85px; font-weight: 700; color: #00ff41; text-shadow: 0 0 20px rgba(0, 255, 65, 0.4); line-height: 1; margin: 5px 0; }
+        #contador { font-size: 18px; color: #666; letter-spacing: 3px; font-weight: bold; }
 
-        button {
-            width: 100%;
-            padding: 18px;
-            margin: 5px 0;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-family: 'Rajdhani';
-            transition: 0.1s;
-        }
+        .agenda-section { background: #1a1a1a; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 10px; text-align: left; }
+        .label-input { font-size: 11px; color: #888; text-transform: uppercase; display: block; margin-bottom: 5px; margin-top: 10px; }
+        
+        .row-gps { display: flex; gap: 10px; align-items: flex-end; }
+        input[type="text"] { width: 100%; background: #000; border: 1px solid #444; color: #aaa; padding: 10px; font-family: 'Rajdhani'; font-size: 14px; border-radius: 6px; box-sizing: border-box; }
+        
+        .btn-gps { background: #333; color: #ffd700; border: 1px solid #444; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 18px; min-width: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .btn-gps span { font-size: 9px; text-transform: uppercase; margin-top: 2px; }
 
+        button { width: 100%; padding: 18px; margin: 5px 0; font-size: 18px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; text-transform: uppercase; font-family: 'Rajdhani'; transition: 0.1s; }
         .btn-principal { background-color: #ffd700; color: #000; box-shadow: 0 5px 0 #968000; }
         .btn-principal:active { transform: translateY(3px); box-shadow: 0 2px 0 #968000; }
         .btn-salvar { background-color: #2a2a2a; color: #ffd700; font-size: 14px; padding: 12px; }
 
-        #log-container {
-            margin-top: 30px;
-            background: #000;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: left;
-            border: 1px solid #222;
-        }
-
+        #log-container { margin-top: 30px; background: #000; padding: 15px; border-radius: 10px; text-align: left; border: 1px solid #222; }
         .log-item { border-bottom: 1px solid #1a1a1a; padding: 12px 0; }
         .log-meta { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
         .progress-bg { width: 100%; height: 4px; background: #111; border-radius: 2px; margin-top: 8px; overflow: hidden; }
@@ -150,11 +59,16 @@
     </div>
 
     <div class="agenda-section">
-        <label class="label-input">Localização (Google Maps):</label>
-        <input type="text" id="user-location" placeholder="Ex: RHI Magnesita, Contagem" onchange="saveSettings()">
+        <label class="label-input">Localização Atual:</label>
+        <div class="row-gps">
+            <input type="text" id="user-location" placeholder="Coordenadas GPS aparecerão aqui">
+            <div class="btn-gps" onclick="pegarLocalizacao()" title="Capturar Localização">
+                🌍 <span>Globo</span>
+            </div>
+        </div>
 
-        <label class="label-input">Destinatários (E-mails separados por vírgula):</label>
-        <input type="text" id="user-emails" placeholder="seu-email@exemplo.com, supervisor@exemplo.com" onchange="saveSettings()">
+        <label class="label-input">Destinatários (E-mails):</label>
+        <input type="text" id="user-emails" placeholder="e-mail1, e-mail2" onchange="saveSettings()">
         
         <button class="btn-principal" onclick="agendar()">
             <span style="font-size: 11px; display: block; opacity: 0.7; letter-spacing: 1px;">Google Calendar</span>
@@ -177,6 +91,30 @@
     function saveSettings() {
         localStorage.setItem('rhi_emails_list', document.getElementById('user-emails').value);
         localStorage.setItem('rhi_location', document.getElementById('user-location').value);
+    }
+
+    function pegarLocalizacao() {
+        const campo = document.getElementById('user-location');
+        campo.placeholder = "Obtendo GPS...";
+        
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lon = pos.coords.longitude;
+                    // Gera o link do Maps direto para o local
+                    const linkMaps = `https://www.google.com/maps?q=${lat},${lon}`;
+                    campo.value = linkMaps;
+                    saveSettings();
+                },
+                (err) => {
+                    alert("Erro ao obter localização. Verifique as permissões de GPS.");
+                    campo.placeholder = "GPS Desativado";
+                }
+            );
+        } else {
+            alert("Navegador não suporta Geolocalização.");
+        }
     }
 
     function atualizarRelogio() {
@@ -248,10 +186,13 @@
         const emails = document.getElementById('user-emails').value;
         const location = document.getElementById('user-location').value;
         if (s === "--:--") return;
+        
         const d = new Date().toISOString().split('T')[0].replace(/-/g,'');
         
-        // Parâmetros: 'add' para e-mails e 'location' para o endereço/local
-        const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=SAIDA+RHI+DANIEL&dates=${d}T${s.replace(':','')}00/${d}T${s.replace(':','')}00&add=${encodeURIComponent(emails.trim())}&location=${encodeURIComponent(location.trim())}`;
+        // Detalhes extras no corpo do evento (Lembretes)
+        const detalhes = encodeURIComponent(`NOTIFICAÇÃO RHI: Favor configurar alertas para 10 e 30 minutos antes deste horário.\nLocalização original: ${location}`);
+        
+        const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=SAIDA+RHI+DANIEL&dates=${d}T${s.replace(':','')}00/${d}T${s.replace(':','')}00&add=${encodeURIComponent(emails.trim())}&location=${encodeURIComponent(location.trim())}&details=${detalhes}`;
         
         window.open(url, '_blank');
     }
