@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Painel de Controle RHI</title>
+    <title>Painel RHI - Controle de Jornada</title>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap');
@@ -20,73 +20,53 @@
             margin: 0;
         }
 
-        .container { max-width: 420px; margin: 0 auto; position: relative; }
+        .container { max-width: 420px; margin: 0 auto; }
 
-        /* Relógio Local Estilizado */
+        /* Relógio LED Topo */
         #relogio-local {
-            font-size: 22px;
+            font-size: 24px;
             color: #ffd700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-            margin-bottom: 15px;
-            background: #1e1e1e;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            margin: 10px 0 20px 0;
+            background: #1a1a1a;
             display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
+            padding: 6px 20px;
+            border-radius: 30px;
             border: 1px solid #333;
+            letter-spacing: 1px;
         }
 
-        h1 { font-size: 20px; text-transform: uppercase; color: #888; letter-spacing: 2px; margin: 10px 0; }
+        h1 { font-size: 14px; text-transform: uppercase; color: #555; letter-spacing: 3px; margin: 5px 0; }
 
-        /* Painel de Configurações */
-        .config-box {
-            background: #1e1e1e;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #333;
-            display: none; /* Escondido por padrão */
-            text-align: left;
-        }
-        
-        .config-toggle {
-            color: #ffd700;
-            cursor: pointer;
-            font-size: 14px;
-            text-decoration: underline;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        input[type="time"], input[type="email"] {
+        input[type="time"] {
             width: 100%;
             background-color: #000;
-            border: 1px solid #444;
+            border: 2px solid #ffd700;
             color: #ffd700;
-            padding: 12px;
-            font-size: 20px;
+            padding: 15px;
+            font-size: 38px;
             font-family: 'Rajdhani';
-            border-radius: 6px;
+            border-radius: 10px;
+            text-align: center;
             box-sizing: border-box;
-            margin-top: 5px;
+            margin-bottom: 20px;
         }
-
-        input[type="time"] { font-size: 32px; text-align: center; border-color: #ffd700; }
 
         /* Painel LED Central */
         .painel-led {
             background: #000;
             padding: 25px 10px;
             border-radius: 15px;
-            border: 4px solid #2a2a2a;
-            margin: 20px 0;
-            box-shadow: inset 0 0 30px rgba(0,0,0,1), 0 0 15px rgba(0,0,0,0.5);
+            border: 3px solid #2a2a2a;
+            margin-bottom: 25px;
+            box-shadow: inset 0 0 30px rgba(0,0,0,1);
         }
 
         #resultado {
-            font-size: 80px;
+            font-size: 85px;
             font-weight: 700;
             color: #00ff41;
-            text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+            text-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
             line-height: 1;
             margin: 5px 0;
         }
@@ -98,12 +78,36 @@
             font-weight: bold;
         }
 
-        .falta-pouco { color: #ff8c00 !important; text-shadow: 0 0 10px rgba(255, 140, 0, 0.4) !important; }
+        /* Área de Envio/Agenda */
+        .agenda-section {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            margin-bottom: 10px;
+        }
+
+        .label-email { font-size: 11px; color: #888; text-transform: uppercase; text-align: left; display: block; margin-bottom: 5px; }
+        
+        input[type="text"] {
+            width: 100%;
+            background: #000;
+            border: 1px solid #444;
+            color: #aaa;
+            padding: 10px;
+            font-family: 'Rajdhani';
+            font-size: 14px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus { border-color: #ffd700; color: #fff; }
 
         button {
             width: 100%;
             padding: 18px;
-            margin: 8px 0;
+            margin: 5px 0;
             font-size: 18px;
             font-weight: bold;
             border-radius: 8px;
@@ -111,27 +115,28 @@
             cursor: pointer;
             text-transform: uppercase;
             font-family: 'Rajdhani';
+            transition: 0.1s;
         }
 
         .btn-principal { background-color: #ffd700; color: #000; box-shadow: 0 5px 0 #968000; }
         .btn-principal:active { transform: translateY(3px); box-shadow: 0 2px 0 #968000; }
-        .btn-salvar { background-color: #2a2a2a; color: #ffd700; border: 1px solid #444; }
+        .btn-salvar { background-color: #2a2a2a; color: #ffd700; font-size: 14px; padding: 12px; }
 
-        /* Log Estendido */
+        /* Log Estendido 10 Dias */
         #log-container {
             margin-top: 30px;
-            background: #181818;
+            background: #000;
             padding: 15px;
             border-radius: 10px;
             text-align: left;
-            border: 1px solid #333;
+            border: 1px solid #222;
         }
 
-        .log-item { border-bottom: 1px solid #252525; padding: 12px 0; position: relative; }
+        .log-item { border-bottom: 1px solid #1a1a1a; padding: 12px 0; }
         .log-meta { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
-        .progress-bg { width: 100%; height: 5px; background: #000; border-radius: 2px; margin-top: 8px; overflow: hidden; }
+        .progress-bg { width: 100%; height: 4px; background: #111; border-radius: 2px; margin-top: 8px; overflow: hidden; }
         .progress-bar { height: 100%; width: 0%; background: #ffd700; transition: width 0.5s; }
-        .btn-del { color: #ff4500; font-size: 18px; cursor: pointer; padding: 0 10px; }
+        .btn-del { color: #ff4500; font-size: 16px; cursor: pointer; padding: 0 10px; }
     </style>
 </head>
 <body>
@@ -139,28 +144,28 @@
 <div class="container">
     <div id="relogio-local">00:00:00</div>
 
-    <span class="config-toggle" onclick="toggleConfig()">⚙️ CONFIGURAR E-MAIL</span>
-    
-    <div id="config-box" class="config-box">
-        <label>E-mail para Agenda:</label>
-        <input type="email" id="user-email" placeholder="seu-email@exemplo.com" onchange="saveEmail()">
-        <p style="font-size: 11px; color: #666; margin-top: 5px;">O e-mail é salvo apenas no seu aparelho.</p>
-    </div>
-
-    <h1>Início da Jornada</h1>
+    <h1>Início do Turno</h1>
     <input type="time" id="entrada" oninput="calcular()">
 
     <div class="painel-led">
-        <div style="font-size: 12px; color: #444; letter-spacing: 2px;">SAÍDA PREVISTA</div>
         <div id="resultado">--:--</div>
-        <div id="contador">RESTAM: --:--:--</div>
+        <div id="contador">--:--:--</div>
     </div>
 
-    <button class="btn-principal" onclick="agendar()">Agendar no Google</button>
-    <button class="btn-salvar" onclick="salvar()">Salvar Histórico</button>
+    <div class="agenda-section">
+        <label class="label-email">Destinatários (separar por vírgula):</label>
+        <input type="text" id="user-emails" placeholder="seu-email@exemplo.com, supervisor@exemplo.com" onchange="saveEmails()">
+        
+        <button class="btn-principal" onclick="agendar()">
+            <span style="font-size: 12px; display: block; opacity: 0.7;">Google Calendar</span>
+            Enviar para Agenda
+        </button>
+    </div>
+
+    <button class="btn-salvar" onclick="salvar()">Salvar no Histórico Local</button>
 
     <div id="log-container">
-        <div style="font-size: 12px; color: #555; margin-bottom: 10px; text-align: center;">LOG DE 10 DIAS</div>
+        <div style="font-size: 11px; color: #444; margin-bottom: 10px; text-align: center; letter-spacing: 2px;">HISTÓRICO ÚLTIMOS 10 DIAS</div>
         <div id="lista-log"></div>
     </div>
 </div>
@@ -169,31 +174,22 @@
     const JORNADA = 588;
     let mSaidaGlobal = null;
 
-    function toggleConfig() {
-        const box = document.getElementById('config-box');
-        box.style.display = box.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function saveEmail() {
-        const email = document.getElementById('user-email').value;
-        localStorage.setItem('user_email_rhi', email);
+    function saveEmails() {
+        const val = document.getElementById('user-emails').value;
+        localStorage.setItem('rhi_emails_list', val);
     }
 
     function atualizarRelogio() {
-        const agora = new Date();
-        document.getElementById('relogio-local').innerText = agora.toLocaleTimeString('pt-BR');
+        document.getElementById('relogio-local').innerText = new Date().toLocaleTimeString('pt-BR');
     }
 
     function calcular() {
         const input = document.getElementById('entrada');
         if (!input.value) return;
-
         const [h, m] = input.value.split(':').map(Number);
         mSaidaGlobal = (h * 60) + m + JORNADA;
-
         const hS = Math.floor(mSaidaGlobal / 60) % 24;
         const mS = mSaidaGlobal % 60;
-        
         document.getElementById('resultado').innerText = `${String(hS).padStart(2,'0')}:${String(mS).padStart(2,'0')}`;
         localStorage.setItem('ultimaEntrada', input.value);
     }
@@ -201,34 +197,29 @@
     function atualizarRegressiva() {
         const cont = document.getElementById('contador');
         if (!mSaidaGlobal) return;
-
         const agora = new Date();
-        const mAgora = (agora.getHours() * 60) + agora.getMinutes();
-        const sAgora = agora.getSeconds();
-        let diffS = (mSaidaGlobal * 60) - ((mAgora * 60) + sAgora);
+        const mAg = (agora.getHours() * 60) + agora.getMinutes();
+        const sAg = agora.getSeconds();
+        let diff = (mSaidaGlobal * 60) - ((mAg * 60) + sAg);
 
-        if (diffS <= 0) {
-            cont.innerText = "JORNADA CONCLUÍDA!";
-            cont.className = "concluido";
+        if (diff <= 0) {
+            cont.innerText = "TURNO FINALIZADO";
+            cont.style.color = "#00ff41";
             return;
         }
-
-        const hF = Math.floor(diffS / 3600);
-        const mF = Math.floor((diffS % 3600) / 60);
-        const sF = diffS % 60;
-        cont.innerText = `RESTAM: ${String(hF).padStart(2,'0')}:${String(mF).padStart(2,'0')}:${String(sF).padStart(2,'0')}`;
-        cont.className = hF === 0 ? "falta-pouco" : "";
+        const hF = Math.floor(diff / 3600);
+        const mF = Math.floor((diff % 3600) / 60);
+        const sF = diff % 60;
+        cont.innerText = `FALTAM: ${String(hF).padStart(2,'0')}:${String(mF).padStart(2,'0')}:${String(sF).padStart(2,'0')}`;
+        cont.style.color = hF === 0 ? "#ff8c00" : "#666";
     }
 
     function salvar() {
         const e = document.getElementById('entrada').value;
         const s = document.getElementById('resultado').innerText;
         if (!e || s === "--:--") return;
-
         const logs = JSON.parse(localStorage.getItem('logs_saida_10d') || '[]');
         logs.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), entrada: e, saida: s });
-        
-        // Limita a 10 registros
         localStorage.setItem('logs_saida_10d', JSON.stringify(logs.slice(0, 10)));
         atualizarLog();
     }
@@ -237,7 +228,6 @@
         const l = document.getElementById('lista-log');
         const logs = JSON.parse(localStorage.getItem('logs_saida_10d') || '[]');
         const mAg = (new Date().getHours() * 60) + new Date().getMinutes();
-        
         l.innerHTML = logs.map(item => {
             const pE = item.entrada.split(':'); const pS = item.saida.split(':');
             const mI = (parseInt(pE[0])*60)+parseInt(pE[1]); let mF = (parseInt(pS[0])*60)+parseInt(pS[1]);
@@ -255,20 +245,18 @@
 
     function agendar() {
         const s = document.getElementById('resultado').innerText;
-        const email = localStorage.getItem('user_email_rhi') || '';
+        const emails = document.getElementById('user-emails').value;
         if (s === "--:--") return;
         const d = new Date().toISOString().split('T')[0].replace(/-/g,'');
-        // Adiciona o e-mail cadastrado à URL da agenda
-        const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=SAIDA+RHI&dates=${d}T${s.replace(':','')}00/${d}T${s.replace(':','')}00&add=${email}`;
-        window.open(url, '_blank');
+        // O parâmetro 'add' aceita e-mails separados por vírgula
+        window.open(`https://www.google.com/calendar/render?action=TEMPLATE&text=SAIDA+RHI+DANIEL&dates=${d}T${s.replace(':','')}00/${d}T${s.replace(':','')}00&add=${emails.trim()}`, '_blank');
     }
 
     window.onload = () => {
         const e = localStorage.getItem('ultimaEntrada');
-        const emailSalvo = localStorage.getItem('user_email_rhi');
+        const ems = localStorage.getItem('rhi_emails_list');
         if (e) { document.getElementById('entrada').value = e; calcular(); }
-        if (emailSalvo) document.getElementById('user-email').value = emailSalvo;
-        
+        if (ems) document.getElementById('user-emails').value = ems;
         atualizarLog();
         setInterval(atualizarRelogio, 1000);
         setInterval(() => { atualizarRegressiva(); atualizarLog(); }, 1000);
