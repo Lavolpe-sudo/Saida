@@ -101,3 +101,172 @@
         }
 
         input[type="text"]:focus { border-color: #ffd700; color: #fff; }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            margin: 5px 0;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Rajdhani';
+            transition: 0.1s;
+        }
+
+        .btn-principal { background-color: #ffd700; color: #000; box-shadow: 0 5px 0 #968000; }
+        .btn-principal:active { transform: translateY(3px); box-shadow: 0 2px 0 #968000; }
+        .btn-salvar { background-color: #2a2a2a; color: #ffd700; font-size: 14px; padding: 12px; }
+
+        #log-container {
+            margin-top: 30px;
+            background: #000;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: left;
+            border: 1px solid #222;
+        }
+
+        .log-item { border-bottom: 1px solid #1a1a1a; padding: 12px 0; }
+        .log-meta { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        .progress-bg { width: 100%; height: 4px; background: #111; border-radius: 2px; margin-top: 8px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: #ffd700; transition: width 0.5s; }
+        .btn-del { color: #ff4500; font-size: 16px; cursor: pointer; padding: 0 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="relogio-local">00:00:00</div>
+
+    <h1>Início do Turno</h1>
+    <input type="time" id="entrada" oninput="calcular()">
+
+    <div class="painel-led">
+        <div id="resultado">--:--</div>
+        <div id="contador">--:--:--</div>
+    </div>
+
+    <div class="agenda-section">
+        <label class="label-input">Localização (Google Maps):</label>
+        <input type="text" id="user-location" placeholder="Ex: RHI Magnesita, Contagem" onchange="saveSettings()">
+
+        <label class="label-input">Destinatários (E-mails separados por vírgula):</label>
+        <input type="text" id="user-emails" placeholder="seu-email@exemplo.com, supervisor@exemplo.com" onchange="saveSettings()">
+        
+        <button class="btn-principal" onclick="agendar()">
+            <span style="font-size: 11px; display: block; opacity: 0.7; letter-spacing: 1px;">Google Calendar</span>
+            Enviar para Agenda
+        </button>
+    </div>
+
+    <button class="btn-salvar" onclick="salvar()">Salvar no Histórico Local</button>
+
+    <div id="log-container">
+        <div style="font-size: 11px; color: #444; margin-bottom: 10px; text-align: center; letter-spacing: 2px;">HISTÓRICO ÚLTIMOS 10 DIAS</div>
+        <div id="lista-log"></div>
+    </div>
+</div>
+
+<script>
+    const JORNADA = 588;
+    let mSaidaGlobal = null;
+
+    function saveSettings() {
+        localStorage.setItem('rhi_emails_list', document.getElementById('user-emails').value);
+        localStorage.setItem('rhi_location', document.getElementById('user-location').value);
+    }
+
+    function atualizarRelogio() {
+        document.getElementById('relogio-local').innerText = new Date().toLocaleTimeString('pt-BR');
+    }
+
+    function calcular() {
+        const input = document.getElementById('entrada');
+        if (!input.value) return;
+        const [h, m] = input.value.split(':').map(Number);
+        mSaidaGlobal = (h * 60) + m + JORNADA;
+        const hS = Math.floor(mSaidaGlobal / 60) % 24;
+        const mS = mSaidaGlobal % 60;
+        document.getElementById('resultado').innerText = `${String(hS).padStart(2,'0')}:${String(mS).padStart(2,'0')}`;
+        localStorage.setItem('ultimaEntrada', input.value);
+    }
+
+    function atualizarRegressiva() {
+        const cont = document.getElementById('contador');
+        if (!mSaidaGlobal) return;
+        const agora = new Date();
+        const mAg = (agora.getHours() * 60) + agora.getMinutes();
+        const sAg = agora.getSeconds();
+        let diff = (mSaidaGlobal * 60) - ((mAg * 60) + sAg);
+
+        if (diff <= 0) {
+            cont.innerText = "TURNO FINALIZADO";
+            cont.style.color = "#00ff41";
+            return;
+        }
+        const hF = Math.floor(diff / 3600);
+        const mF = Math.floor((diff % 3600) / 60);
+        const sF = diff % 60;
+        cont.innerText = `FALTAM: ${String(hF).padStart(2,'0')}:${String(mF).padStart(2,'0')}:${String(sF).padStart(2,'0')}`;
+        cont.style.color = hF === 0 ? "#ff8c00" : "#666";
+    }
+
+    function salvar() {
+        const e = document.getElementById('entrada').value;
+        const s = document.getElementById('resultado').innerText;
+        if (!e || s === "--:--") return;
+        const logs = JSON.parse(localStorage.getItem('logs_saida_10d') || '[]');
+        logs.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), entrada: e, saida: s });
+        localStorage.setItem('logs_saida_10d', JSON.stringify(logs.slice(0, 10)));
+        atualizarLog();
+    }
+
+    function atualizarLog() {
+        const l = document.getElementById('lista-log');
+        const logs = JSON.parse(localStorage.getItem('logs_saida_10d') || '[]');
+        const mAg = (new Date().getHours() * 60) + new Date().getMinutes();
+        l.innerHTML = logs.map(item => {
+            const pE = item.entrada.split(':'); const pS = item.saida.split(':');
+            const mI = (parseInt(pE[0])*60)+parseInt(pE[1]); let mF = (parseInt(pS[0])*60)+parseInt(pS[1]);
+            if (mF < mI) mF += 1440;
+            let perc = Math.max(0, Math.min(100, ((mAg - mI) / (mF - mI)) * 100));
+            return `<div class="log-item"><div class="log-meta"><span onclick="excluirItem(${item.id})" class="btn-del">✕</span><span><b>${item.data.slice(0,5)}</b></span><span>E: ${item.entrada} | S: ${item.saida}</span></div><div class="progress-bg"><div class="progress-bar" style="width:${perc}%; background:${perc>=100?'#00ff41':'#ffd700'}"></div></div></div>`;
+        }).join('');
+    }
+
+    function excluirItem(id) {
+        let logs = JSON.parse(localStorage.getItem('logs_saida_10d') || '[]').filter(i => i.id !== id);
+        localStorage.setItem('logs_saida_10d', JSON.stringify(logs));
+        atualizarLog();
+    }
+
+    function agendar() {
+        const s = document.getElementById('resultado').innerText;
+        const emails = document.getElementById('user-emails').value;
+        const location = document.getElementById('user-location').value;
+        if (s === "--:--") return;
+        const d = new Date().toISOString().split('T')[0].replace(/-/g,'');
+        
+        // Parâmetros: 'add' para e-mails e 'location' para o endereço/local
+        const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=SAIDA+RHI+DANIEL&dates=${d}T${s.replace(':','')}00/${d}T${s.replace(':','')}00&add=${encodeURIComponent(emails.trim())}&location=${encodeURIComponent(location.trim())}`;
+        
+        window.open(url, '_blank');
+    }
+
+    window.onload = () => {
+        const e = localStorage.getItem('ultimaEntrada');
+        const ems = localStorage.getItem('rhi_emails_list');
+        const loc = localStorage.getItem('rhi_location');
+        if (e) { document.getElementById('entrada').value = e; calcular(); }
+        if (ems) document.getElementById('user-emails').value = ems;
+        if (loc) document.getElementById('user-location').value = loc;
+        atualizarLog();
+        setInterval(atualizarRelogio, 1000);
+        setInterval(() => { atualizarRegressiva(); atualizarLog(); }, 1000);
+    };
+</script>
+</body>
+</html>
