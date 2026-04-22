@@ -3,101 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Saída RHI">
-    
-    <link rel="manifest" href='data:application/manifest+json,{"name":"Painel de Saída","short_name":"Saída","start_url":"index.html","display":"standalone","background_color":"#2d2d2d","theme_color":"#ffd700"}'>
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Saída RHI","short_name":"Saída","display":"standalone","background_color":"#1a1a1a","theme_color":"#ffd700"}'>
 
-    <title>Painel de Saída Industrial</title>
+    <title>Painel Industrial - Saída</title>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap');
-        body { font-family: 'Rajdhani', sans-serif; background-color: #2d2d2d; color: #e0e0e0; text-align: center; padding: 20px; margin: 0; }
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap');
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
         .flash-confirm { background-color: #ffd700 !important; transition: 0.1s; }
-        h1 { margin: 20px auto; font-size: 26px; text-transform: uppercase; padding: 12px 20px; display: inline-block; background: linear-gradient(145deg, #2d2d2d, #1a1a1a); border: 2px solid #555; border-radius: 4px; color: #ffd700; }
-        .container { max-width: 380px; margin: 0 auto; }
-        input[type="time"] { width: 100%; background-color: #1a1a1a; border: 2px solid #ffd700; color: #ffd700; padding: 15px; font-size: 32px; border-radius: 8px; text-align: center; box-sizing: border-box; font-family: 'Rajdhani'; }
-        #resultado { font-size: 80px; font-weight: bold; color: #ff4500; margin: 20px 0; height: 100px; line-height: 100px; }
-        button { width: 100%; padding: 15px; margin: 10px 0; font-size: 18px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; text-transform: uppercase; font-family: 'Rajdhani'; }
-        .btn-principal { background-color: #ffd700; color: #2d2d2d; }
-        .btn-salvar { background-color: #444; color: #ffd700; }
-        #log-container { margin-top: 30px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid #444; text-align: left; }
+
+        h1 {
+            margin: 10px auto 20px auto;
+            font-size: 22px;
+            text-transform: uppercase;
+            padding: 10px 15px;
+            display: inline-block;
+            border: 2px solid #333;
+            border-radius: 4px;
+            color: #ffd700;
+            background: #222;
+        }
+
+        .container { max-width: 400px; margin: 0 auto; }
+
+        label { display: block; margin-bottom: 8px; font-size: 14px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+
+        input[type="time"] {
+            width: 100%;
+            background-color: #000;
+            border: 2px solid #444;
+            color: #ffd700;
+            padding: 12px;
+            font-size: 28px;
+            font-family: 'Rajdhani';
+            border-radius: 8px;
+            text-align: center;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input[type="time"]:focus { border-color: #ffd700; }
+
+        /* Estilo LED */
+        .painel-led {
+            background: #000;
+            padding: 20px 10px;
+            border-radius: 12px;
+            border: 3px solid #333;
+            margin: 20px 0;
+            box-shadow: inset 0 0 20px rgba(0,0,0,1);
+        }
+
+        #resultado {
+            font-size: 75px;
+            font-weight: 700;
+            color: #00ff41; /* Verde Matrix/Industrial */
+            text-shadow: 0 0 15px rgba(0, 255, 65, 0.6);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        #contador {
+            font-size: 20px;
+            color: #888;
+            letter-spacing: 2px;
+        }
+
+        .falta-pouco { color: #ff8c00 !important; text-shadow: 0 0 10px rgba(255, 140, 0, 0.5) !important; }
+        .concluido { color: #00ff41 !important; }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            margin: 8px 0;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Rajdhani';
+            transition: 0.2s;
+        }
+
+        .btn-principal { background-color: #ffd700; color: #000; box-shadow: 0 4px 0 #b89b00; }
+        .btn-principal:active { transform: translateY(3px); box-shadow: 0 1px 0 #b89b00; }
+        .btn-salvar { background-color: #333; color: #ffd700; margin-top: 10px; }
+
+        #log-container {
+            margin-top: 30px;
+            background: #222;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+            border: 1px solid #333;
+        }
+
         .log-item { border-bottom: 1px solid #333; padding: 12px 0; }
-        .log-meta { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
-        .btn-excluir-item { color: #ff4500; cursor: pointer; padding: 0 8px; font-size: 18px; }
-        .progress-bg { width: 100%; height: 8px; background: #111; border-radius: 4px; overflow: hidden; margin-top: 8px; }
-        .progress-bar { height: 100%; width: 0%; background: linear-gradient(to right, #ffd700, #ff4500); transition: width 0.5s; }
+        .log-meta { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        .btn-excluir { color: #ff4500; cursor: pointer; font-size: 18px; padding: 0 5px; }
+
+        .progress-bg { width: 100%; height: 6px; background: #111; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: #ffd700; transition: width 0.5s; }
     </style>
 </head>
 <body>
+
 <div class="container">
-    <h1>🕒 Painel de Saída</h1>
+    <h1>👷 Painel de Controle</h1>
+
+    <label>Início da Jornada</label>
     <input type="time" id="entrada" oninput="calcular()">
-    <div id="resultado">--:--</div>
+
+    <div class="painel-led">
+        <label style="color:#555">Saída Prevista</label>
+        <div id="resultado">--:--</div>
+        <div id="contador">RESTAM: --:--:--</div>
+    </div>
+
     <button class="btn-principal" onclick="agendar()">Agendar no Google</button>
     <button class="btn-salvar" onclick="salvar()">Salvar no Histórico</button>
+
     <div id="log-container">
         <div id="lista-log"></div>
-        <div onclick="limpar()" style="color:#666; font-size:11px; text-decoration:underline; margin-top:15px; cursor:pointer;">Limpar Tudo</div>
+        <div onclick="limpar()" style="color:#444; font-size:11px; text-decoration:underline; margin-top:15px; cursor:pointer; text-align:center;">LIMPAR TUDO</div>
     </div>
 </div>
+
 <script>
-    const JORNADA = 588;
+    const JORNADA = 588; // 9h48m
+    let mSaidaGlobal = null;
+
     function calcular() {
-        const c = document.getElementById('entrada');
-        const v = document.getElementById('resultado');
-        if (!c.value) return;
-        const p = c.value.split(':');
-        const mS = (parseInt(p[0]) * 60) + parseInt(p[1]) + JORNADA;
-        const h = Math.floor(mS / 60) % 24;
-        const m = mS % 60;
-        v.innerText = (h < 10 ? '0'+h : h) + ":" + (m < 10 ? '0'+m : m);
-        localStorage.setItem('ultimaEntrada', c.value);
+        const input = document.getElementById('entrada');
+        const visor = document.getElementById('resultado');
+        if (!input.value) return;
+
+        const [h, m] = input.value.split(':').map(Number);
+        mSaidaGlobal = (h * 60) + m + JORNADA;
+
+        const hS = Math.floor(mSaidaGlobal / 60) % 24;
+        const mS = mSaidaGlobal % 60;
+        
+        visor.innerText = `${String(hS).padStart(2,'0')}:${String(mS).padStart(2,'0')}`;
+        localStorage.setItem('ultimaEntrada', input.value);
+        atualizarRegressiva();
     }
+
+    function atualizarRegressiva() {
+        const cont = document.getElementById('contador');
+        if (!mSaidaGlobal) return;
+
+        const agora = new Date();
+        const mAgora = (agora.getHours() * 60) + agora.getMinutes();
+        const sAgora = agora.getSeconds();
+        
+        let diffSegundos = (mSaidaGlobal * 60) - ((mAgora * 60) + sAgora);
+
+        if (diffSegundos <= 0) {
+            cont.innerText = "JORNADA CONCLUÍDA!";
+            cont.className = "concluido";
+            document.getElementById('resultado').style.color = "#00ff41";
+            return;
+        }
+
+        const hF = Math.floor(diffSegundos / 3600);
+        const mF = Math.floor((diffSegundos % 3600) / 60);
+        const sF = diffSegundos % 60;
+
+        cont.innerText = `FALTAM: ${String(hF).padStart(2,'0')}:${String(mF).padStart(2,'0')}:${String(sF).padStart(2,'0')}`;
+        
+        // Alerta laranja se faltar menos de 1 hora
+        if (hF === 0) cont.className = "falta-pouco";
+        else cont.className = "";
+    }
+
     function salvar() {
         const e = document.getElementById('entrada').value;
         const s = document.getElementById('resultado').innerText;
         if (!e || s === "--:--") return;
+
         if (navigator.vibrate) navigator.vibrate(50);
         document.body.classList.add('flash-confirm');
         setTimeout(() => document.body.classList.remove('flash-confirm'), 100);
+
         const logs = JSON.parse(localStorage.getItem('logs_saida') || '[]');
-        logs.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}), entrada: e, saida: s });
+        logs.unshift({ id: Date.now(), data: new Date().toLocaleDateString('pt-BR'), entrada: e, saida: s });
         localStorage.setItem('logs_saida', JSON.stringify(logs.slice(0, 5)));
         atualizarLog();
     }
+
     function atualizarLog() {
         const l = document.getElementById('lista-log');
         const logs = JSON.parse(localStorage.getItem('logs_saida') || '[]');
-        if (logs.length === 0) { l.innerHTML = "Vazio"; return; }
-        const minAgora = (new Date().getHours() * 60) + new Date().getMinutes();
+        if (logs.length === 0) { l.innerHTML = "<span style='color:#444'>Sem histórico</span>"; return; }
+        
+        const mAg = (new Date().getHours() * 60) + new Date().getMinutes();
+        
         l.innerHTML = logs.map(item => {
             const pE = item.entrada.split(':'); const pS = item.saida.split(':');
             const mI = (parseInt(pE[0])*60)+parseInt(pE[1]); let mF = (parseInt(pS[0])*60)+parseInt(pS[1]);
             if (mF < mI) mF += 1440;
-            let perc = Math.max(0, Math.min(100, ((minAgora - mI) / (mF - mI)) * 100));
-            return `<div class="log-item"><div class="log-meta"><span onclick="excluirItem(${item.id})" class="btn-excluir-item">✕</span><span><b>${item.data}</b></span><span>E: ${item.entrada} | S: ${item.saida}</span></div><div class="progress-bg"><div class="progress-bar" style="width:${perc}%; background:${perc>=100?'#28a745':'#ffd700'}"></div></div></div>`;
+            let perc = Math.max(0, Math.min(100, ((mAg - mI) / (mF - mI)) * 100));
+            return `<div class="log-item"><div class="log-meta"><span onclick="excluirItem(${item.id})" class="btn-excluir">✕</span><span><b>${item.data.slice(0,5)}</b></span><span>E: ${item.entrada} | S: ${item.saida}</span></div><div class="progress-bg"><div class="progress-bar" style="width:${perc}%; background:${perc>=100?'#00ff41':'#ffd700'}"></div></div></div>`;
         }).join('');
     }
+
     function excluirItem(id) {
         let logs = JSON.parse(localStorage.getItem('logs_saida') || '[]').filter(i => i.id !== id);
         localStorage.setItem('logs_saida', JSON.stringify(logs));
         atualizarLog();
     }
+
     function agendar() {
         const s = document.getElementById('resultado').innerText;
+        if (s === "--:--") return;
         const d = new Date().toISOString().split('T')[0].replace(/-/g,'');
-        window.open(`https://www.google.com/calendar/render?action=TEMPLATE&text=SAIDA&dates=${d}T${s.replace(':','')}00/${d}T${s.replace(':','')}00&add=Andrade.daniellopes@gmail.com,Daniel.andrade@rhimagnesita.com`, '_blank');
+        window.open(`https://www.google.com/calendar/render?action=TEMPLATE&text=SAIDA+RHI&dates=${d}T${s.replace(':','')}00/${d}T${s.replace(':','')}00&add=Andrade.daniellopes@gmail.com,Daniel.andrade@rhimagnesita.com`, '_blank');
     }
-    function limpar() { if(confirm("Limpar?")) { localStorage.removeItem('logs_saida'); atualizarLog(); } }
+
+    function limpar() { if(confirm("Apagar tudo?")) { localStorage.removeItem('logs_saida'); atualizarLog(); } }
+
     window.onload = () => {
         const e = localStorage.getItem('ultimaEntrada');
         if (e) { document.getElementById('entrada').value = e; calcular(); }
         atualizarLog();
-        setInterval(atualizarLog, 30000);
+        setInterval(() => {
+            atualizarRegressiva();
+            atualizarLog();
+        }, 1000);
     };
 </script>
 </body>
